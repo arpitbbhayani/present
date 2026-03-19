@@ -2,7 +2,15 @@
 
 Write slides in Markdown, run locally, present clean - built for engineers who hate slide tools.
 
-![Slide showing a code-heavy presentation with syntax highlighting](examples/image.png)
+![Slide showing a code-heavy presentation with syntax highlighting](https://github.com/user-attachments/assets/07b0659c-f82c-44b2-8ecd-815dfd081c49)
+
+## Install globally
+
+```bash
+npm install -g present-md
+```
+
+Then use `present-md` directly without `npx`.
 
 ## Usage
 
