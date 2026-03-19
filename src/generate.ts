@@ -113,8 +113,8 @@ html, body {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   padding: 4rem 6rem;
   opacity: 0;
   pointer-events: none;
@@ -497,12 +497,24 @@ html, body {
 
 #kbd-hint.hidden { opacity: 0; }
 
+/* ── Pets ─────────────────────────────────────────────────────────────── */
+.pet {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+@media print {
+  .pet { display: none !important; }
+}
+
 /* ── Blinking cursor ──────────────────────────────────────────────────── */
 #cursor {
   position: fixed;
   top: 4rem;
   right: 6rem;
-  width: 2px;
+  width: 12px;
   height: clamp(2rem, 4.5vw, 3.4rem);
   background: var(--mauve);
   z-index: 100;
@@ -748,6 +760,50 @@ ${slideHtml}
 
   // ── Hint auto-hide ────────────────────────────────────────────────────
   setTimeout(() => { elHint.classList.add('hidden'); }, 4000);
+
+  // ── Pets ──────────────────────────────────────────────────────────────
+  (function spawnPets() {
+    const petUrls = [
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/turtle/orange_with_ball_8fps.gif?raw=true',
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/turtle/green_with_ball_8fps.gif?raw=true',
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/chicken/white_with_ball_8fps.gif?raw=true',
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/crab/red_with_ball_8fps.gif?raw=true',
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/dog/akita_with_ball_8fps.gif?raw=true',
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/dog/brown_with_ball_8fps.gif?raw=true',
+      'https://github.com/tonybaloney/vscode-pets/blob/main/media/fox/white_with_ball_8fps.gif?raw=true',
+    ];
+
+    const count = 3;
+    const minDist = 100;
+
+    // Shuffle and pick N unique pets
+    const shuffled = petUrls.slice().sort(() => Math.random() - 0.5);
+    const chosen = shuffled.slice(0, count);
+
+    // HUD: 2px progress bar + ~30px counter row. Pets sit just above that.
+    const hudHeight = 34;
+    const bottomOffset = hudHeight;
+
+    // Pick random x positions along the full width, min 100px apart
+    const xPositions = [];
+    let attempts = 0;
+    while (xPositions.length < count && attempts < 2000) {
+      attempts++;
+      const x = 20 + Math.random() * (window.innerWidth - 100);
+      const tooClose = xPositions.some(px => Math.abs(px - x) < minDist);
+      if (!tooClose) xPositions.push(x);
+    }
+
+    chosen.forEach(function(url, i) {
+      const img = document.createElement('img');
+      img.src = url;
+      img.className = 'pet';
+      img.style.left   = xPositions[i] + 'px';
+      img.style.bottom = bottomOffset + 'px';
+      img.style.top    = 'auto';
+      document.body.appendChild(img);
+    });
+  })();
 
   // ── Init ─────────────────────────────────────────────────────────────
   slides[0].classList.add('is-active');
